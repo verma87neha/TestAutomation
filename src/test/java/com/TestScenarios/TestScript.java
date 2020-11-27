@@ -19,7 +19,7 @@ public static WebDriver driver = new ChromeDriver();
 	
 
 	@Test(dataProvider = "testData")
-	public void login(String tc, String URL,String data1,String x) {
+	public void login(String tc, String URL,String data1,String y) {
 		System.out.println("values in login"+ " "+  tc +" "+ URL+ " "+ data1 );
 		driver.get(URL);
 		driver.manage().window().maximize();
