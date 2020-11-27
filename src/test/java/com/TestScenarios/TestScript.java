@@ -15,16 +15,42 @@ import com.Utility.ReadProperties;
 public class TestScript {
 	ExcelParser exlReader = new ExcelParser();
 	ReadProperties readProp = new ReadProperties();
+	TestAtrributes attr = new TestAtrributes();
 	public static WebDriver driver = new ChromeDriver();
 
 	@Test(dataProvider = "testData")
-	public void login(String tc, String URL, String data1, String y) {
-		System.out.println("values in login" + " " + tc + " " + URL + " " + data1);
-		driver.get(URL);
+	public void login(String TestcaseID, String URL, String data, String y) {
+
+		attr.setTestcaseID(TestcaseID);
+		attr.setURL(URL);
+		attr.setData(data);
+		testcaseExe();
+	}
+
+	private void testcaseExe() {
+		driver.get(attr.getURL());
 		driver.manage().window().maximize();
+		action(attr.getData());
+		driver.close();
+	}
+
+	@Test(dataProvider = "ObjectRepository")
+	public void objectRepo(String field_Id,String field_Name,String field_Value,String error_Msg,String xpath,
+			String mandatory,String type) {
+		
+		attr.setField_Id(field_Id);
+		attr.setField_Name(field_Name);
+		attr.setField_Value(field_Value);
+		attr.setError_Msg(error_Msg);
+		attr.setMandatory(mandatory);
+		attr.setXpath(xpath);
+		attr.setInput(type);
+	}
+	
+	
+	private void action(String data1) {
 		driver.findElement(By.xpath("//*[@id=\"tsf\"]/div[2]/div[1]/div[1]/div/div[2]/input")).sendKeys(data1);
 		driver.findElement(By.xpath("//*[@id=\"tsf\"]/div[2]/div[1]/div[3]/center/input[1]")).click();
-		driver.close();
 	}
 
 	@DataProvider
@@ -45,6 +71,28 @@ public class TestScript {
 			return null;
 		}
 
+	}
+
+	@DataProvider
+	public Object[][] ObjectRepository() {
+		Object[][] data;
+		HashMap<String, String> valuesMeta;
+		try {
+			valuesMeta = readProp.getPropValues();
+
+			String filePath = valuesMeta.get("filePath");
+			String TestData = valuesMeta.get("TestData");
+			String TestCase = valuesMeta.get("TestData");
+			String ObjectRepository = valuesMeta.get("TestData");
+
+			data = exlReader.readExcel(filePath, ObjectRepository, "TestSuit1");
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+			return null;
+		}
+		return data;
 	}
 
 	@Test(dataProvider = "testData")
