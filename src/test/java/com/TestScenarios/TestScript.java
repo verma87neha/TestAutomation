@@ -19,7 +19,7 @@ public class TestScript {
 	public static WebDriver driver = new ChromeDriver();
 
 	@Test(dataProvider = "testData")
-	public void login(String TestcaseID, String URL, String data, String y) {
+	public void login(String TestcaseID, String URL, String data, String x) {
 
 		attr.setTestcaseID(TestcaseID);
 		attr.setURL(URL);
