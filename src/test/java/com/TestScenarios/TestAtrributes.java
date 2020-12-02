@@ -30,9 +30,17 @@ public class TestAtrributes {
 	String testStep;
 	String desc;
 	String action;
+	String objectRepo;
 	String input;
-    
-    String testcase_Sno;
+	
+	
+    public String getObjectRepo() {
+		return objectRepo;
+	}
+	public void setObjectRepo(String objectRepo) {
+		this.objectRepo = objectRepo;
+	}
+	String testcase_Sno;
 	public String getFilePath() {
 		return filePath;
 	}
