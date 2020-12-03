@@ -15,11 +15,15 @@ import org.testng.annotations.Test;
 
 import com.Utility.ExcelParser;
 import com.Utility.ReadProperties;
+import com.pojo.TestCase;
+import com.pojo.TestData;
 
 public class TestScript {
 	ExcelParser exlReader = new ExcelParser();
 	ReadProperties readProp = new ReadProperties();
 	TestAtrributes attr = new TestAtrributes();
+	TestData tData = new TestData();
+
 	public static WebDriver driver = new ChromeDriver();
 
 	HashMap<String, String> valuesMeta;
@@ -47,16 +51,18 @@ public class TestScript {
 	@Test(dataProvider = "testData")
 	public void login(String TestcaseID, String URL, String data) {
 
-		attr.setTestcaseID(TestcaseID);
-		attr.setURL(URL);
-		attr.setData(data);
+		tData.setTestcaseID(TestcaseID);
+		tData.setURL(URL);
+		tData.setData(data);
 		testcaseExe();
 	}
 
 	private void testcaseExe() {
-		driver.get(attr.getURL());
+		driver.get(tData.getURL());
 		driver.manage().window().maximize();
-		action(attr.getData());
+		ObjectRepository();
+		testCases();
+		//action(tData.getData());
 		driver.close();
 	}
 
@@ -83,11 +89,16 @@ public class TestScript {
 	 * }
 	 */
 
-	private void action(String data1) {
-		ObjectRepository();
-		testCases();
-		driver.findElement(By.xpath("//*[@id=\"tsf\"]/div[2]/div[1]/div[1]/div/div[2]/input")).sendKeys(data1);
-		driver.findElement(By.xpath("//*[@id=\"tsf\"]/div[2]/div[1]/div[3]/center/input[1]")).click();
+	private void uiAction(String action,String object,String input) {
+		if(action.equalsIgnoreCase("sendKeys"))
+		{
+		driver.findElement(By.xpath("object")).sendKeys(input);
+		}
+		
+		if(action.equalsIgnoreCase("click"))
+		{
+		driver.findElement(By.xpath("object")).click();
+		}
 	}
 
 	@DataProvider
@@ -113,24 +124,81 @@ public class TestScript {
 	}
 
 	// @DataProvider
-	public Object[][] testCases() {
-		Object[][] testcase;
+	public String[][] testCases() {
+		String[][] testcase;
+		TestCase tCase;
+		List<TestCase> TCList = new ArrayList<TestCase>();
 		int row = 4;
 		int column = 6;
 
-		Set<Object> tcSet = new HashSet<>();
+		Set<String> tcSet = new HashSet<>();
 		readproperties();
-		List<Object> testCaseList = new ArrayList<Object>();
-		testcase = exlReader.readExcel(filePath, TestCase, "TestSuit1");
+		List<String> testCaseList = new ArrayList<String>();
+		testcase = (String[][]) exlReader.readExcel(filePath, TestCase, "TestSuit1");
 		for (int i = 0; i < row; i++) {
 			testCaseList.add(testcase[i][0]);
 		}
-		for (Object t : testCaseList) {
+
+		System.out.println("Value of Test cases  " + TCList.toString());
+		for (String t : testCaseList) {
 			tcSet.add(t);
 
 		}
-		System.out.println("value in set " + tcSet.toString());
+
+		for (int i = 0, j = 0; i < row; i++)
+
+		{
+			tCase = new TestCase();
+			tCase.setTc(testcase[i][j]);
+			tCase.setTestStep(testcase[i][j + 1]);
+			tCase.setDesc(testcase[i][j + 1]);
+			tCase.setAction(testcase[i][j + 2]);
+			tCase.setObjectRepo(testcase[i][j + 3]);
+			tCase.setInput(testcase[i][j + 4]);
+			TCList.add(tCase);
+		}
+
+		HashMap<String, List<TestCase>> testScenarios = new HashMap<String, List<TestCase>>();
+
+		for (String scenarios : tcSet)
+
+		{
+			List<TestCase> tempList = new ArrayList<TestCase>();
+			for (int i = 0; i < TCList.size(); i++) {
+
+				if ((TCList.get(i).getTc()).equals(scenarios))
+
+				{
+					System.out.println("correct values " + TCList.get(i).getTc() + " " + scenarios);
+
+					tempList.add(TCList.get(i));
+
+					System.out.println(" print list" + TCList.get(i).getTestStep() + " " + scenarios);
+				}
+
+			}
+			testScenarios.put(scenarios, tempList);
+		}
+
+		System.out.println("Print Test case set");
+		for (String scenarios : tcSet) {
+			System.out.println(" value in hashmap " + testScenarios.get(scenarios).toString());
+			for(int k = 0; k < testScenarios.get(scenarios).size();k++)
+			{
+			String action =	testScenarios.get(scenarios).get(k).getAction();
+			//String object =	testScenarios.get(scenarios).get(k).getObjectRepo();
+			String object =	getObjectValue();
+			String input =	testScenarios.get(scenarios).get(k).getInput();
+			
+			uiAction(action,object,input);
+			}
+		}
 		return testcase;
+	}
+
+	private String getObjectValue() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/*
