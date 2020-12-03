@@ -1,7 +1,11 @@
 package com.TestScenarios;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -40,13 +44,14 @@ public class TestScript {
 
 	}
 
-	
-	  @Test(dataProvider = "testData") public void login(String TestcaseID, String
-	  URL, String data) {
-	  
-	  attr.setTestcaseID(TestcaseID); attr.setURL(URL); attr.setData(data);
-	  testcaseExe(); }
-	 
+	@Test(dataProvider = "testData")
+	public void login(String TestcaseID, String URL, String data) {
+
+		attr.setTestcaseID(TestcaseID);
+		attr.setURL(URL);
+		attr.setData(data);
+		testcaseExe();
+	}
 
 	private void testcaseExe() {
 		driver.get(attr.getURL());
@@ -55,32 +60,32 @@ public class TestScript {
 		driver.close();
 	}
 
-	@Test(dataProvider = "ObjectRepository")
-	public void objectRepo( String field_Name, String field_Value, String error_Msg, String xpath,String mandatory, String type) {
+	/*
+	 * @Test(dataProvider = "ObjectRepository") public void objectRepo( String
+	 * field_Name, String field_Value, String error_Msg, String xpath,String
+	 * mandatory, String type) {
+	 * 
+	 * //attr.setField_Id(field_Id); attr.setField_Name(field_Name);
+	 * attr.setField_Value(field_Value); attr.setError_Msg(error_Msg);
+	 * attr.setMandatory(mandatory); attr.setXpath(xpath); attr.setInput(type);
+	 * 
+	 * }
+	 */
 
-		//attr.setField_Id(field_Id);
-		attr.setField_Name(field_Name);
-		attr.setField_Value(field_Value);
-		attr.setError_Msg(error_Msg);
-		attr.setMandatory(mandatory);
-		attr.setXpath(xpath);
-		attr.setInput(type);
-
-	}
-
-	@Test(dataProvider = "testCases")
-	public void testCase( String tc, String testStep, String desc, String action,String objectvalue, String input) {
-
-		attr.setField_Id(tc);
-		attr.setField_Name(testStep);
-		attr.setField_Value(desc);
-		attr.setError_Msg(action);
-		attr.setObjectRepo(objectvalue);
-		attr.setMandatory(input);
-
-	}
+	/*
+	 * @Test(dataProvider = "testCases") public void testCase( String tc, String
+	 * testStep, String desc, String action,String objectvalue, String input) {
+	 * 
+	 * attr.setField_Id(tc); attr.setField_Name(testStep);
+	 * attr.setField_Value(desc); attr.setError_Msg(action);
+	 * attr.setObjectRepo(objectvalue); attr.setMandatory(input);
+	 * 
+	 * }
+	 */
 
 	private void action(String data1) {
+		ObjectRepository();
+		testCases();
 		driver.findElement(By.xpath("//*[@id=\"tsf\"]/div[2]/div[1]/div[1]/div/div[2]/input")).sendKeys(data1);
 		driver.findElement(By.xpath("//*[@id=\"tsf\"]/div[2]/div[1]/div[3]/center/input[1]")).click();
 	}
@@ -90,34 +95,44 @@ public class TestScript {
 		readproperties();
 
 		Object[][] testdata = exlReader.readExcel(filePath, TestData, "TestSuit1");
-System.out.println("value of testdata "+testdata[0][0]+testdata[0][1]+testdata[0][2]);
+
 		return testdata;
 
 	}
 
-	@DataProvider
+	// @DataProvider
 	public Object[][] ObjectRepository() {
 		Object[][] objectRepo;
-
+		int row = 2;
+		int column = 6;
 		readproperties();
 
 		objectRepo = exlReader.readExcel(filePath, ObjectRepository, "TestSuit1");
-System.out.println("object repo "+objectRepo[0][1]+objectRepo[0][2]+objectRepo[0][3]);
+
 		return objectRepo;
 	}
 
-	@DataProvider
+	// @DataProvider
 	public Object[][] testCases() {
 		Object[][] testcase;
+		int row = 4;
+		int column = 6;
 
+		Set<Object> tcSet = new HashSet<>();
 		readproperties();
-
+		List<Object> testCaseList = new ArrayList<Object>();
 		testcase = exlReader.readExcel(filePath, TestCase, "TestSuit1");
-System.out.println("value of test cases "+testcase[0][0]+testcase[0][1]+testcase[0][2]+testcase[0][3]);
+		for (int i = 0; i < row; i++) {
+			testCaseList.add(testcase[i][0]);
+		}
+		for (Object t : testCaseList) {
+			tcSet.add(t);
+
+		}
+		System.out.println("value in set " + tcSet.toString());
 		return testcase;
 	}
 
-	
 	/*
 	 * @Test(dataProvider = "testData") public String[][] readTestData(String sno,
 	 * String tc, String URL, String data1) {
@@ -125,7 +140,7 @@ System.out.println("value of test cases "+testcase[0][0]+testcase[0][1]+testcase
 	 * System.out.println("values " + sno + " " + tc + " " + URL + " " + data1);
 	 * return null; }
 	 */
-	 
+
 	/*
 	 * @Test public void quit() { BrowserFactory.closeAllDriver(); }
 	 */

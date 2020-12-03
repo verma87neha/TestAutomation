@@ -38,28 +38,26 @@ public class ExcelParser {
 
 			ExcelWSheet = ExcelWBook.getSheet(sheetName);
 
-			int startCol = 1;
-			int startRow = 1;
-			int ci = 0, cj = 0;
+			int startCol = 0;
+			int startRow = 0;
 
-			int totalRows = ExcelWSheet.getLastRowNum() + 1;
+			int totalRows = ExcelWSheet.getLastRowNum();
 			System.out.println("value of total rows " + totalRows);
-			int totalCols = ExcelWSheet.getRow(0).getLastCellNum()-1;
+			int totalCols = ExcelWSheet.getRow(0).getLastCellNum() - 1;
 			System.out.println("value of total columns " + totalCols);
 
 			tabArray = new String[totalRows][totalCols];
 
-			// for (int j=startCol;j<=totalCols;j++, cj++,ci++)
-			for (int i = startRow; i < totalRows; i++, ci++)
-				for (int j = startCol; j <= totalCols; j++, cj++) {
+			for (int i = startRow; i < totalRows; i++) {
+				System.out.println("values+++++++++++++");
 
-					// tabArray[ci][cj]=getCellData(ci,j);
-					tabArray[ci][cj] = getCellData(i, j);
-					// System.out.println("value of row and column " +ci+" "+cj+" " +
-					// tabArray[ci][cj]);
-					// System.out.println("value of row and column " +i+" "+j+" " + tabArray[i][j]);
+				for (int j = startCol; j < totalCols; j++) {
+
+					tabArray[i][j] = getCellData(i + 1, j + 1);
+					System.out.println("value of row and column " + i + " " + j + " " + tabArray[i][j]);
+
 				}
-
+			}
 		}
 
 		catch (FileNotFoundException e)
