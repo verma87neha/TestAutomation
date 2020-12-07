@@ -91,15 +91,26 @@ public class TestScript {
 	 * }
 	 */
 
-	private void uiAction(String action, String objectRepo, String input,ObjectRepository repository) {
-		//String xpath = objectRepo;
-		System.out.println(" values fetch " +action+" "+ objectRepo + " "+ input + " "+ repository.toString());
+	private void uiAction(String action, String objectRepo, String input, ObjectRepository repository) {
+		// String xpath = objectRepo;
+		System.out.println(" values fetch " + action + " " + objectRepo + " " + input + " " + repository.toString());
 		if (action.equalsIgnoreCase("sendKeys")) {
-			driver.findElement(By.xpath("/html/body/div[2]/div[2]/form/div[2]/div[1]/div[1]/div/div[2]/input")).sendKeys(input);
+			driver.findElement(By.xpath(objectRepo)).sendKeys(input);
+
 		}
 
 		if (action.equalsIgnoreCase("click")) {
-			driver.findElement(By.xpath("/html/body/div[2]/div[2]/form/div[2]/div[1]/div[3]/center/input[1]")).click();
+			driver.findElement(By.xpath(objectRepo)).click();
+
+		}
+		
+		if (action.equalsIgnoreCase("hg")) {
+			driver.navigate().to(objectRepo);
+
+		}
+		if (action.equalsIgnoreCase("close")) {
+			driver.close();
+
 		}
 	}
 
@@ -116,7 +127,7 @@ public class TestScript {
 	// @DataProvider
 	public String[][] ObjectRepository() {
 
-		int row = 2;
+		int row = 3;
 		int column = 6;
 		readproperties();
 
@@ -210,9 +221,7 @@ public class TestScript {
 				String input = testScenarios.get(scenarios).get(k).getInput();
 				if (!objectLocator.equals(null)) {
 					uiAction(action, objectLocator.getXpath(), input, objectLocator);
-				}
-				else
-				{
+				} else {
 					System.out.println(" Incorrect locator");
 				}
 			}
