@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections4.map.LinkedMap;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -104,7 +106,7 @@ public class TestScript {
 
 		}
 		
-		if (action.equalsIgnoreCase("hg")) {
+		if (action.equalsIgnoreCase("navigate")) {
 			driver.navigate().to(objectRepo);
 
 		}
@@ -145,7 +147,7 @@ public class TestScript {
 		List<TestCase> tcList = new ArrayList<TestCase>();
 		List<ObjectRepository> objectList = new ArrayList<ObjectRepository>();
 		int row = 4;
-		int objectRow = 2;
+		int objectRow = 3;
 		int column = 6;
 
 		Set<String> tcSet = new HashSet<>();
@@ -188,7 +190,7 @@ public class TestScript {
 
 		}
 
-		HashMap<String, List<TestCase>> testScenarios = new HashMap<String, List<TestCase>>();
+		Map<String, List<TestCase>> testScenarios = new LinkedMap<String, List<TestCase>>();
 
 		for (String scenarios : tcSet)
 
