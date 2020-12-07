@@ -15,6 +15,7 @@ import org.testng.annotations.Test;
 
 import com.Utility.ExcelParser;
 import com.Utility.ReadProperties;
+import com.pojo.ObjectRepository;
 import com.pojo.TestCase;
 import com.pojo.TestData;
 
@@ -26,6 +27,7 @@ public class TestScript {
 
 	public static WebDriver driver = new ChromeDriver();
 
+	String[][] objectRepo;
 	HashMap<String, String> valuesMeta;
 	String filePath;
 	String TestData;
@@ -60,9 +62,9 @@ public class TestScript {
 	private void testcaseExe() {
 		driver.get(tData.getURL());
 		driver.manage().window().maximize();
-		ObjectRepository();
+
 		testCases();
-		//action(tData.getData());
+		// action(tData.getData());
 		driver.close();
 	}
 
@@ -89,15 +91,15 @@ public class TestScript {
 	 * }
 	 */
 
-	private void uiAction(String action,String object,String input) {
-		if(action.equalsIgnoreCase("sendKeys"))
-		{
-		driver.findElement(By.xpath("object")).sendKeys(input);
+	private void uiAction(String action, String objectRepo, String input,ObjectRepository repository) {
+		//String xpath = objectRepo;
+		System.out.println(" values fetch " +action+" "+ objectRepo + " "+ input + " "+ repository.toString());
+		if (action.equalsIgnoreCase("sendKeys")) {
+			driver.findElement(By.xpath("/html/body/div[2]/div[2]/form/div[2]/div[1]/div[1]/div/div[2]/input")).sendKeys(input);
 		}
-		
-		if(action.equalsIgnoreCase("click"))
-		{
-		driver.findElement(By.xpath("object")).click();
+
+		if (action.equalsIgnoreCase("click")) {
+			driver.findElement(By.xpath("/html/body/div[2]/div[2]/form/div[2]/div[1]/div[3]/center/input[1]")).click();
 		}
 	}
 
@@ -112,13 +114,13 @@ public class TestScript {
 	}
 
 	// @DataProvider
-	public Object[][] ObjectRepository() {
-		Object[][] objectRepo;
+	public String[][] ObjectRepository() {
+
 		int row = 2;
 		int column = 6;
 		readproperties();
 
-		objectRepo = exlReader.readExcel(filePath, ObjectRepository, "TestSuit1");
+		objectRepo = (String[][]) exlReader.readExcel(filePath, ObjectRepository, "TestSuit1");
 
 		return objectRepo;
 	}
@@ -126,9 +128,13 @@ public class TestScript {
 	// @DataProvider
 	public String[][] testCases() {
 		String[][] testcase;
+		String[][] objects;
 		TestCase tCase;
-		List<TestCase> TCList = new ArrayList<TestCase>();
+		ObjectRepository objectValue;
+		List<TestCase> tcList = new ArrayList<TestCase>();
+		List<ObjectRepository> objectList = new ArrayList<ObjectRepository>();
 		int row = 4;
+		int objectRow = 2;
 		int column = 6;
 
 		Set<String> tcSet = new HashSet<>();
@@ -138,24 +144,37 @@ public class TestScript {
 		for (int i = 0; i < row; i++) {
 			testCaseList.add(testcase[i][0]);
 		}
+		objects = ObjectRepository();
 
-		System.out.println("Value of Test cases  " + TCList.toString());
 		for (String t : testCaseList) {
 			tcSet.add(t);
 
 		}
-
+		for (int k = 0, j = 0; k < objectRow; k++) {
+			objectValue = new ObjectRepository();
+			objectValue.setField_Name(objects[k][j]);
+			objectValue.setField_Value(objects[k][j + 1]);
+			objectValue.setError_Msg(objects[k][j + 2]);
+			objectValue.setXpath(objects[k][j + 3]);
+			objectValue.setMandatory(objects[k][j + 4]);
+			objectValue.setType(objects[k][j + 5]);
+			System.out.println(" Value of Object repo " + objectValue.toString());
+			objectList.add(objectValue);
+		}
 		for (int i = 0, j = 0; i < row; i++)
 
 		{
 			tCase = new TestCase();
+
 			tCase.setTc(testcase[i][j]);
 			tCase.setTestStep(testcase[i][j + 1]);
-			tCase.setDesc(testcase[i][j + 1]);
-			tCase.setAction(testcase[i][j + 2]);
-			tCase.setObjectRepo(testcase[i][j + 3]);
-			tCase.setInput(testcase[i][j + 4]);
-			TCList.add(tCase);
+			tCase.setDesc(testcase[i][j + 2]);
+			tCase.setAction(testcase[i][j + 3]);
+			tCase.setObjectRepo(testcase[i][j + 4]);
+			tCase.setInput(testcase[i][j + 5]);
+
+			tcList.add(tCase);
+
 		}
 
 		HashMap<String, List<TestCase>> testScenarios = new HashMap<String, List<TestCase>>();
@@ -164,16 +183,16 @@ public class TestScript {
 
 		{
 			List<TestCase> tempList = new ArrayList<TestCase>();
-			for (int i = 0; i < TCList.size(); i++) {
+			for (int i = 0; i < tcList.size(); i++) {
 
-				if ((TCList.get(i).getTc()).equals(scenarios))
+				if ((tcList.get(i).getTc()).equals(scenarios))
 
 				{
-					System.out.println("correct values " + TCList.get(i).getTc() + " " + scenarios);
+					System.out.println("correct values " + tcList.get(i).getTc() + " " + scenarios);
 
-					tempList.add(TCList.get(i));
+					tempList.add(tcList.get(i));
 
-					System.out.println(" print list" + TCList.get(i).getTestStep() + " " + scenarios);
+					System.out.println(" print list" + tcList.get(i).getTestStep() + " " + scenarios);
 				}
 
 			}
@@ -181,24 +200,35 @@ public class TestScript {
 		}
 
 		System.out.println("Print Test case set");
+		ObjectRepository objectLocator = new ObjectRepository();
 		for (String scenarios : tcSet) {
 			System.out.println(" value in hashmap " + testScenarios.get(scenarios).toString());
-			for(int k = 0; k < testScenarios.get(scenarios).size();k++)
-			{
-			String action =	testScenarios.get(scenarios).get(k).getAction();
-			//String object =	testScenarios.get(scenarios).get(k).getObjectRepo();
-			String object =	getObjectValue();
-			String input =	testScenarios.get(scenarios).get(k).getInput();
-			
-			uiAction(action,object,input);
+			for (int k = 0; k < testScenarios.get(scenarios).size(); k++) {
+				String action = testScenarios.get(scenarios).get(k).getAction();
+				String object = testScenarios.get(scenarios).get(k).getObjectRepo();
+				objectLocator = getObjectValue(object, objectList);
+				String input = testScenarios.get(scenarios).get(k).getInput();
+				if (!objectLocator.equals(null)) {
+					uiAction(action, objectLocator.getXpath(), input, objectLocator);
+				}
+				else
+				{
+					System.out.println(" Incorrect locator");
+				}
 			}
 		}
 		return testcase;
 	}
 
-	private String getObjectValue() {
-		// TODO Auto-generated method stub
-		return null;
+	private ObjectRepository getObjectValue(String object, List<ObjectRepository> objectList) {
+		ObjectRepository objectInfo = new ObjectRepository();
+		for (int i = 0; i < objectList.size(); i++) {
+			if (object.equalsIgnoreCase(objectList.get(i).getField_Name())) {
+				objectInfo = objectList.get(i);
+				break;
+			}
+		}
+		return objectInfo;
 	}
 
 	/*
