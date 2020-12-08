@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.map.LinkedMap;
 import org.openqa.selenium.By;
@@ -70,29 +72,6 @@ public class TestScript {
 		driver.close();
 	}
 
-	/*
-	 * @Test(dataProvider = "ObjectRepository") public void objectRepo( String
-	 * field_Name, String field_Value, String error_Msg, String xpath,String
-	 * mandatory, String type) {
-	 * 
-	 * //attr.setField_Id(field_Id); attr.setField_Name(field_Name);
-	 * attr.setField_Value(field_Value); attr.setError_Msg(error_Msg);
-	 * attr.setMandatory(mandatory); attr.setXpath(xpath); attr.setInput(type);
-	 * 
-	 * }
-	 */
-
-	/*
-	 * @Test(dataProvider = "testCases") public void testCase( String tc, String
-	 * testStep, String desc, String action,String objectvalue, String input) {
-	 * 
-	 * attr.setField_Id(tc); attr.setField_Name(testStep);
-	 * attr.setField_Value(desc); attr.setError_Msg(action);
-	 * attr.setObjectRepo(objectvalue); attr.setMandatory(input);
-	 * 
-	 * }
-	 */
-
 	private void uiAction(String action, String objectRepo, String input, ObjectRepository repository) {
 		// String xpath = objectRepo;
 		System.out.println(" values fetch " + action + " " + objectRepo + " " + input + " " + repository.toString());
@@ -105,7 +84,7 @@ public class TestScript {
 			driver.findElement(By.xpath(objectRepo)).click();
 
 		}
-		
+
 		if (action.equalsIgnoreCase("navigate")) {
 			driver.navigate().to(objectRepo);
 
@@ -129,8 +108,8 @@ public class TestScript {
 	// @DataProvider
 	public String[][] ObjectRepository() {
 
-		int row = 3;
-		int column = 6;
+		// int row = 3;
+		// int column = 6;
 		readproperties();
 
 		objectRepo = (String[][]) exlReader.readExcel(filePath, ObjectRepository, "TestSuit1");
@@ -140,31 +119,26 @@ public class TestScript {
 
 	// @DataProvider
 	public String[][] testCases() {
-		String[][] testcase;
-		String[][] objects;
-		TestCase tCase;
-		ObjectRepository objectValue;
-		List<TestCase> tcList = new ArrayList<TestCase>();
-		List<ObjectRepository> objectList = new ArrayList<ObjectRepository>();
-		int row = 4;
-		int objectRow = 3;
+
 		int column = 6;
 
-		Set<String> tcSet = new HashSet<>();
 		readproperties();
-		List<String> testCaseList = new ArrayList<String>();
-		testcase = (String[][]) exlReader.readExcel(filePath, TestCase, "TestSuit1");
+
+		String[][] testcase = (String[][]) exlReader.readExcel(filePath, TestCase, "TestSuit1");
+
+		int row = testcase.length;
+		Set<String> tcSet = new LinkedHashSet<>();
 		for (int i = 0; i < row; i++) {
-			testCaseList.add(testcase[i][0]);
+			tcSet.add(testcase[i][0]);
 		}
-		objects = ObjectRepository();
 
-		for (String t : testCaseList) {
-			tcSet.add(t);
+		System.out.println(" Value of set "+tcSet.toString());
+		String[][] objects = ObjectRepository();
 
-		}
+		int objectRow = objects.length;
+		List<ObjectRepository> objectList = new ArrayList<ObjectRepository>();
 		for (int k = 0, j = 0; k < objectRow; k++) {
-			objectValue = new ObjectRepository();
+			ObjectRepository objectValue = new ObjectRepository();
 			objectValue.setField_Name(objects[k][j]);
 			objectValue.setField_Value(objects[k][j + 1]);
 			objectValue.setError_Msg(objects[k][j + 2]);
@@ -174,10 +148,12 @@ public class TestScript {
 			System.out.println(" Value of Object repo " + objectValue.toString());
 			objectList.add(objectValue);
 		}
+
+		List<TestCase> tcList = new ArrayList<TestCase>();
 		for (int i = 0, j = 0; i < row; i++)
 
 		{
-			tCase = new TestCase();
+			TestCase tCase = new TestCase();
 
 			tCase.setTc(testcase[i][j]);
 			tCase.setTestStep(testcase[i][j + 1]);
@@ -192,9 +168,7 @@ public class TestScript {
 
 		Map<String, List<TestCase>> testScenarios = new LinkedMap<String, List<TestCase>>();
 
-		for (String scenarios : tcSet)
-
-		{
+		for (String scenarios : tcSet) {
 			List<TestCase> tempList = new ArrayList<TestCase>();
 			for (int i = 0; i < tcList.size(); i++) {
 
