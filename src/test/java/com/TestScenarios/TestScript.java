@@ -69,7 +69,7 @@ public class TestScript {
 
 		testCases();
 		// action(tData.getData());
-		driver.close();
+	//	driver.close();
 	}
 
 	private void uiAction(String action, String objectRepo, String input, ObjectRepository repository) {
