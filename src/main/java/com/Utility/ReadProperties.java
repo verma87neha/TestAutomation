@@ -35,6 +35,8 @@ HashMap<String, String> properties = new HashMap<String, String>();
 			properties.put("TestData", prop.getProperty("TestData"));
 			properties.put("TestCase", prop.getProperty("TestCase"));
 			properties.put("ObjectRepository", prop.getProperty("ObjectRepository"));
+			properties.put("TestSuit", prop.getProperty("TestSuit"));
+			properties.put("reader", prop.getProperty("reader"));
 			
 		} catch (Exception e) {
 			System.out.println("Exception: " + e);

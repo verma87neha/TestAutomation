@@ -9,14 +9,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections4.map.LinkedMap;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.Utility.ExcelParser;
+import com.Utility.GenericParser;
 import com.Utility.ReadProperties;
+import com.Utility.ReaderFactory;
 import com.keywordImp.Keywordfactory;
 import com.keywordImp.UIkeyword;
 import com.pojo.ObjectRepository;
@@ -37,14 +38,19 @@ public class TestScript {
 	String TestData;
 	String TestCase;
 	String ObjectRepository;
-
+	String TestSuit;
+	String reader;
+	GenericParser parser;
 	public HashMap<String, String> readproperties() {
 		try {
 			valuesMeta = readProp.getPropValues();
 			filePath = valuesMeta.get("filePath");
 			TestData = valuesMeta.get("TestData");
 			TestCase = valuesMeta.get("TestCase");
+			TestSuit = valuesMeta.get("TestSuit");
+			reader = valuesMeta.get("reader");
 			ObjectRepository = valuesMeta.get("ObjectRepository");
+			 parser = new ReaderFactory().readInputType(reader);
 			return valuesMeta;
 		} catch (IOException e) {
 
@@ -75,7 +81,7 @@ public class TestScript {
 	public Object[][] testData() {
 		readproperties();
 
-		Object[][] testdata = exlReader.readExcel(filePath, TestData, "TestSuit1");
+		Object[][] testdata = parser.readInput(filePath, TestData, "TestSuit1");
 
 		return testdata;
 
@@ -88,7 +94,7 @@ public class TestScript {
 		// int column = 6;
 		readproperties();
 
-		objectRepo = (String[][]) exlReader.readExcel(filePath, ObjectRepository, "TestSuit1");
+		objectRepo = (String[][]) parser.readInput(filePath, ObjectRepository, "TestSuit1");
 
 		return objectRepo;
 	}
@@ -100,7 +106,7 @@ public class TestScript {
 
 		readproperties();
 
-		String[][] testcase = (String[][]) exlReader.readExcel(filePath, TestCase, "TestSuit1");
+		String[][] testcase = (String[][]) parser.readInput(filePath, TestCase, "TestSuit1");
 
 		int row = testcase.length;
 		Set<String> tcSet = new LinkedHashSet<>();

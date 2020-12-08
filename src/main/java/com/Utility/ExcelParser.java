@@ -7,14 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.poi.xssf.usermodel.XSSFCell;
-
 import org.apache.poi.xssf.usermodel.XSSFRow;
-
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class ExcelParser {
+public class ExcelParser implements GenericParser{
 
 	private static XSSFSheet ExcelWSheet;
 
@@ -24,7 +21,7 @@ public class ExcelParser {
 
 	private static XSSFRow Row;
 
-	public Object[][] readExcel(String filePath, String fileName, String sheetName) {
+	public Object[][] readInput(String filePath, String fileName, String sheetName) {
 		File file = new File(filePath + "//" + fileName);
 		String[][] tabArray = null;
 
