@@ -3,12 +3,10 @@ package com.TestScenarios;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.map.LinkedMap;
 import org.openqa.selenium.By;
@@ -19,6 +17,8 @@ import org.testng.annotations.Test;
 
 import com.Utility.ExcelParser;
 import com.Utility.ReadProperties;
+import com.keywordImp.Keywordfactory;
+import com.keywordImp.UIkeyword;
 import com.pojo.ObjectRepository;
 import com.pojo.TestCase;
 import com.pojo.TestData;
@@ -66,14 +66,12 @@ public class TestScript {
 	private void testcaseExe() {
 		driver.get(tData.getURL());
 		driver.manage().window().maximize();
-
 		testCases();
-		// action(tData.getData());
-	//	driver.close();
+
 	}
 
 	private void uiAction(String action, String objectRepo, String input, ObjectRepository repository) {
-		// String xpath = objectRepo;
+	
 		System.out.println(" values fetch " + action + " " + objectRepo + " " + input + " " + repository.toString());
 		if (action.equalsIgnoreCase("sendKeys")) {
 			driver.findElement(By.xpath(objectRepo)).sendKeys(input);
@@ -132,7 +130,7 @@ public class TestScript {
 			tcSet.add(testcase[i][0]);
 		}
 
-		System.out.println(" Value of set "+tcSet.toString());
+		System.out.println(" Value of set " + tcSet.toString());
 		String[][] objects = ObjectRepository();
 
 		int objectRow = objects.length;
@@ -195,10 +193,17 @@ public class TestScript {
 				String object = testScenarios.get(scenarios).get(k).getObjectRepo();
 				objectLocator = getObjectValue(object, objectList);
 				String input = testScenarios.get(scenarios).get(k).getInput();
+				if(!action.equalsIgnoreCase("LAUNCH"))
+				{
+				Keywordfactory key = new Keywordfactory();
+				UIkeyword keyword = key.keyFactory(action);
+		
 				if (!objectLocator.equals(null)) {
-					uiAction(action, objectLocator.getXpath(), input, objectLocator);
+				//uiAction(action, objectLocator.getXpath(), input, objectLocator);
+					keyword.keywordAction(input, objectLocator.getType(), objectLocator.getError_Msg(), objectLocator.getXpath());
 				} else {
 					System.out.println(" Incorrect locator");
+				}
 				}
 			}
 		}
