@@ -21,7 +21,22 @@ public class Keywordfactory {
 		if (action.equalsIgnoreCase("close")) {
 			uiKey = new Close();
 		}
+		if (action.equalsIgnoreCase("RadioButton")) {
+			uiKey = new RadioButton();
+		}
 
+		if (action.equalsIgnoreCase("CheckBox")) {
+			uiKey = new CheckBox();
+		}
+		if (action.equalsIgnoreCase("DropDown")) {
+			uiKey = new DropDown();
+		}
+		if (action.equalsIgnoreCase("Aletrs")) {
+			uiKey = new Aletrs();
+		}
+		if (action.equalsIgnoreCase("Calendar")) {
+			uiKey = new SelectCalendar();
+		}
 		return uiKey;
 	}
 }

@@ -81,7 +81,7 @@ public class TestScript {
 	public Object[][] testData() {
 		readproperties();
 
-		Object[][] testdata = parser.readInput(filePath, TestData, "TestSuit1");
+		Object[][] testdata = parser.readInput(filePath, TestData, TestSuit);
 
 		return testdata;
 
@@ -94,7 +94,7 @@ public class TestScript {
 		// int column = 6;
 		readproperties();
 
-		objectRepo = (String[][]) parser.readInput(filePath, ObjectRepository, "TestSuit1");
+		objectRepo = (String[][]) parser.readInput(filePath, ObjectRepository, TestSuit);
 
 		return objectRepo;
 	}
@@ -106,7 +106,7 @@ public class TestScript {
 
 		readproperties();
 
-		String[][] testcase = (String[][]) parser.readInput(filePath, TestCase, "TestSuit1");
+		String[][] testcase = (String[][]) parser.readInput(filePath, TestCase,TestSuit);
 
 		int row = testcase.length;
 		Set<String> tcSet = new LinkedHashSet<>();
