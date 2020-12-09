@@ -7,22 +7,22 @@ public class Aletrs implements UIkeyword{
 	@Override
 	public String keywordAction(String input, String type, String errorMsg, String by) {
 		String response = null;
-		if(type.equalsIgnoreCase("dismiss"))
+		if(input.equalsIgnoreCase("dismiss"))
 		{
 			TestScript.driver.switchTo().alert().dismiss();
 		}
 		
-		if(type.equalsIgnoreCase("accept"))
+		if(input.equalsIgnoreCase("accept"))
 		{
 			TestScript.driver.switchTo().alert().accept();
 		}
 		
-		if(type.equalsIgnoreCase("getText"))
+		if(input.equalsIgnoreCase("getText"))
 		{
 			response = TestScript.driver.switchTo().alert().getText();
 		}
 		
-		if(type.equalsIgnoreCase("sendText"))
+		if(input.equalsIgnoreCase("sendText"))
 		{
 			 TestScript.driver.switchTo().alert().sendKeys(input);
 		}

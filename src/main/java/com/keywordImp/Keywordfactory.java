@@ -37,6 +37,10 @@ public class Keywordfactory {
 		if (action.equalsIgnoreCase("Calendar")) {
 			uiKey = new SelectCalendar();
 		}
+		if (action.equalsIgnoreCase("BrowseFile")) {
+			uiKey = new BrowseFile();
+		}
+		
 		return uiKey;
 	}
 }
