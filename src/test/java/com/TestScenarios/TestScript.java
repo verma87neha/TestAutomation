@@ -3,6 +3,7 @@ package com.TestScenarios;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.Report.ExcelReport;
 import com.Utility.ExcelParser;
 import com.Utility.GenericParser;
 import com.Utility.ReadProperties;
@@ -21,6 +23,7 @@ import com.Utility.ReaderFactory;
 import com.keywordImp.Keywordfactory;
 import com.keywordImp.UIkeyword;
 import com.pojo.ObjectRepository;
+import com.pojo.Report;
 import com.pojo.TestCase;
 import com.pojo.TestData;
 
@@ -29,6 +32,7 @@ public class TestScript {
 	ReadProperties readProp = new ReadProperties();
 	TestAtrributes attr = new TestAtrributes();
 	TestData tData = new TestData();
+	ExcelReport report = new ExcelReport();
 
 	public static WebDriver driver = new ChromeDriver();
 
@@ -41,6 +45,7 @@ public class TestScript {
 	String TestSuit;
 	String reader;
 	GenericParser parser;
+
 	public HashMap<String, String> readproperties() {
 		try {
 			valuesMeta = readProp.getPropValues();
@@ -50,7 +55,7 @@ public class TestScript {
 			TestSuit = valuesMeta.get("TestSuit");
 			reader = valuesMeta.get("reader");
 			ObjectRepository = valuesMeta.get("ObjectRepository");
-			 parser = new ReaderFactory().readInputType(reader);
+			parser = new ReaderFactory().readInputType(reader);
 			return valuesMeta;
 		} catch (IOException e) {
 
@@ -73,10 +78,10 @@ public class TestScript {
 		driver.get(tData.getURL());
 		driver.manage().window().maximize();
 		testCases();
+		//ExcelReport.generateReport(ExcelReport.testReport);
 
 	}
 
-	
 	@DataProvider
 	public Object[][] testData() {
 		readproperties();
@@ -106,7 +111,7 @@ public class TestScript {
 
 		readproperties();
 
-		String[][] testcase = (String[][]) parser.readInput(filePath, TestCase,TestSuit);
+		String[][] testcase = (String[][]) parser.readInput(filePath, TestCase, TestSuit);
 
 		int row = testcase.length;
 		Set<String> tcSet = new LinkedHashSet<>();
@@ -170,9 +175,13 @@ public class TestScript {
 
 		System.out.println("Print Test case set");
 		ObjectRepository objectLocator = new ObjectRepository();
+		List<Report> reportList = new ArrayList<Report>();
 		for (String scenarios : tcSet) {
 			System.out.println(" value in hashmap " + testScenarios.get(scenarios).toString());
 			for (int k = 0; k < testScenarios.get(scenarios).size(); k++) {
+				String status = "Fail";
+				String testcaseId = testScenarios.get(scenarios).get(k).getTc();
+				String testStepId = testScenarios.get(scenarios).get(k).getTestStep();
 				String action = testScenarios.get(scenarios).get(k).getAction();
 				String object = testScenarios.get(scenarios).get(k).getObjectRepo();
 				objectLocator = getObjectValue(object, objectList);
@@ -182,14 +191,19 @@ public class TestScript {
 					UIkeyword keyword = key.keyFactory(action);
 
 					if (!objectLocator.equals(null)) {
-						
-						keyword.keywordAction(input, objectLocator.getType(), objectLocator.getError_Msg(),
-								objectLocator.getXpath());
+
+						LinkedHashMap<String, Report> stepReport = keyword.keywordAction(testcaseId, testStepId, input,
+								objectLocator.getType(), objectLocator.getError_Msg(), objectLocator.getXpath(),
+								status);
+						reportList.add(stepReport.get(testStepId));
 					} else {
 						System.out.println(" Incorrect locator");
 					}
+					
+					
 				}
 			}
+			report.generateReport(reportList);
 		}
 		return testcase;
 	}

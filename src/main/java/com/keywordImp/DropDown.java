@@ -26,7 +26,7 @@ public class DropDown implements UIkeyword  {
 		}
 		else if(type.equals("id"))
 		{
-			selectedItem = new Select(TestScript.driver.findElement(By.id(by)));
+			selectedItem = new Select(TestScript.driver.findElement(By.id("state")));
 			
 			if(pattern.matcher(input).matches())
 			{

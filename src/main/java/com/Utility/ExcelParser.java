@@ -4,14 +4,18 @@ package com.Utility;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class ExcelParser implements GenericParser{
+import com.pojo.Report;
+
+public class ExcelParser implements GenericParser {
 
 	private static XSSFSheet ExcelWSheet;
 
@@ -104,4 +108,42 @@ public class ExcelParser implements GenericParser{
 		}
 
 	}
+
+	@Override
+	public Object[][] writeReport(String filePath, String fileName, List<Report> report) {
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet spreadsheet = workbook.createSheet(" Execution Report");
+		XSSFRow row;
+		int rowid = 0;
+		for (Report writereport : report) {
+
+			row = spreadsheet.createRow(rowid++);
+
+			int cellid = 0;
+
+			//XSSFCell cell = row.createCell(cellid++);
+
+			row.createCell(cellid++).setCellValue((String) writereport.getTestCaseId());
+			row.createCell(cellid++).setCellValue((String) writereport.getStep());
+			row.createCell(cellid++).setCellValue((String) writereport.getStatus());
+			row.createCell(cellid++).setCellValue((String) writereport.getErrorMessage());
+
+		}
+		
+		//Write the workbook in file system
+	      FileOutputStream out;
+		try {
+			out = new FileOutputStream(new File("C://Users//sushant//Desktop//Neha//TestExecutionReport.xlsx"));
+		
+	      
+	      workbook.write(out);
+	      out.close();
+	      System.out.println("Writesheet.xlsx written successfully");
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }
