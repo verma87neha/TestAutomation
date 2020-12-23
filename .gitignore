@@ -4,3 +4,4 @@ target/*
 .project
 test-output
 
+/target/
